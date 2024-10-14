@@ -1,0 +1,2227 @@
+`<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<DMSApplication.Models.LoginModel>
+    " %>
+<%@ Import Namespace="DMSApplication.Controllers" %>
+<%@ Import Namespace="DMSApplication.Models" %>
+
+<%
+    // Explicitly cast the session value to a string
+    string firstName = (string)HttpContext.Current.Session["FirstName"];
+    string lastName = (string)HttpContext.Current.Session["LastName"];
+     string role = (string)HttpContext.Current.Session["Role"];
+    string pcUrl = Url.Action("Pc", "Pc");
+     string userName = (string)HttpContext.Current.Session["UserName"];
+
+    List<DeviceModel> deviceList = ViewBag.DeviceList;
+    List<ClassificationModel> classificationlist = ViewBag.ClassificationList;
+    
+    
+%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="/Content/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="/Content/img/favicon.png">
+  <title>
+    Device
+  </title>
+   <!--     Fonts and icons     -->
+ <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+ <!-- Nucleo Icons -->
+ <link href="/Content/css/nucleo-icons.css" rel="stylesheet" />
+ <link href="/Content/css/nucleo-svg.css" rel="stylesheet" />
+ <!-- Font Awesome Icons -->
+ <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+ <!-- Material Icons -->
+ <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+ <!-- CSS Files -->
+ <link id="pagestyle" href="/Content/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
+ <link href="/Content/mydesign/css/main2.css" rel="stylesheet" />
+     <link href="/Content/mydesign/css/modal.css" rel="stylesheet" />
+   <link href="/Content/mydesign/css/form.css" rel="stylesheet" />
+
+       <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet"/>
+       <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet"/>
+       <link href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css" rel="stylesheet"/>
+      <%-- <link href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css" rel="stylesheet"/>--%>
+       <link href="https://cdn.datatables.net/datetime/1.5.1/css/dataTables.dateTime.min.css" rel="stylesheet"/>
+       <link href="https://editor.datatables.net/extensions/Editor/css/editor.dataTables.min.css" rel="stylesheet"/>
+       <link href="/Content/mydesign/css/jquery.dataTables.min.css" rel="stylesheet" />
+  <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
+ 
+
+
+     <style>
+
+
+         .modal-content2 {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.form-group label {
+    width: 150px; /* Adjust as needed */
+    display: inline-block;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    width: 300px;
+}
+
+
+         #DetailsModal label::after {
+    content: none;
+}
+
+
+         #DetailsModal label {
+    font-weight: bold;
+  }
+
+
+ #btnExport {
+    position: absolute;
+    bottom: -10%;
+    right: 5%;
+}
+
+#DMSTemplate {
+    position: absolute;
+    bottom: -10%;
+    left: 5%;
+}
+
+#btnImport2 {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	width: 100px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #36a2eb;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+}
+
+#download {
+  border: 0;
+  text-align: center;
+  display: inline-block;
+  padding: 14px;
+  width: 120px; /* Set to match the width of #btnCancel */
+  margin: 7px;
+  color: #ffffff;
+  background-color: #36a2eb;
+  border-radius: 8px;
+  font-family: "proxima-nova-soft", sans-serif;
+  font-weight: 600;
+  text-decoration: none;
+  transition: box-shadow 200ms ease-out;
+  position: relative;
+}
+
+#download select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+
+@media only screen and (max-width: 768px) {
+    #DMSTemplate {
+        position: static; /* Change to static positioning for smaller screens */
+        margin-bottom: 10px; /* Add some margin for better spacing */
+        margin-left: 10px; /* Adjust margin as needed */
+    }
+    #btnExport {
+        position: static; /* Change to static positioning for smaller screens */
+        margin-bottom: 10px; /* Add some margin for better spacing */
+        margin-right: 10px; /* Adjust margin as needed */
+    }
+}
+
+
+
+        #DMSTemplate2 {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #04AA6D;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+
+}
+
+        
+
+        div.action-buttons {
+        white-space: nowrap;
+    }
+ 
+    div.action-buttons span {
+        display: inline-block;
+        min-width: 18px;
+        cursor: pointer;
+    }
+
+  #btnAdd,#btnBulkEdit {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	width: 100px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #36a2eb;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+
+}
+
+
+   #btnaddsubmit, #btneditsubmit,#btnbulkeditsubmit {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #36a2eb;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+
+}
+
+  .modal-content2 {
+	background-color: #fff;
+	padding: 15px;
+	border-radius: 5px;
+	max-height: 95%;
+	overflow: auto;
+	margin: auto; /* Center the modal horizontally */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+  #btnDelete {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	width: 150px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #f55649;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+}
+
+   #btnCanc {
+	border: 0;
+	text-align: center;
+	display: inline-block;
+	padding: 14px;
+	width: 150px;
+	margin: 7px;
+	color: #ffffff;
+	background-color: #6c757d;
+	border-radius: 8px;
+	font-family: "proxima-nova-soft", sans-serif;
+	font-weight: 600;
+	text-decoration: none;
+	transition: box-shadow 200ms ease-out;
+}
+
+  .modal-content-success {
+	background-color: #fff;
+	padding: 15px;
+	border-radius: 5px;
+	max-height: 95%;
+	overflow: auto;
+	margin: auto; /* Center the modal horizontally */
+	position: absolute;
+    width: 50vw;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+    .modal-content-loader {
+	background-color: none;
+	padding: 15px;
+	border-radius: 5px;
+	max-height: 95%;
+	overflow: auto;
+	margin: auto; /* Center the modal horizontally */
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+
+form {
+	display: flex;
+	flex-direction: column;
+}
+
+label {
+	margin-bottom: 5px;
+    color: black;
+}
+
+
+input,
+select {
+	margin-bottom: 16px;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+
+.loader {
+  border: 20px solid #f3f3f3;
+  border-top: 20px solid #3498db;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+ body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .main-content {
+            margin-left: 250px; /* Adjust the margin according to your sidebar width */
+            transition: margin-left 0.3s;
+            overflow-x: auto; /* Add this line to enable horizontal scrolling */
+            min-width: 600px; 
+        }
+
+        /* Responsive styles for smaller screens */
+        @media only screen and (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidenav {
+                width: 0;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body class="g-sidenav-show  bg-gray-200">
+
+
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
+    
+        <% if(role == "admin") { %>
+      <div class="sidenav-header">
+         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+      <a class="navbar-brand m-0" href="<%= Url.Action("Index", "Home") %>">
+        <img src="/Content/img/logo-ct.png" class="navbar-brand-img h-100" alt="main_logo">
+        <span class="ms-1 font-weight-bold text-white">Device Management</span>
+      </a>
+    </div>
+    <hr class="horizontal light mt-0 mb-2">
+
+        <% } else { %>
+      <div class="sidenav-header">
+       <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+      <a class="navbar-brand m-0" href="<%= Url.Action("Index", "DeviceManagementAgreement") %>">
+        <img src="/Content/img/logo-ct.png" class="navbar-brand-img h-100" alt="main_logo">
+        <span class="ms-1 font-weight-bold text-white">Device Management</span>
+      </a>
+    </div>
+    <hr class="horizontal light mt-0 mb-2">
+
+        <% } %>
+     
+    <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+      <ul class="navbar-nav">
+           <% if(role == "admin") { %>
+        <li class="nav-item">
+          <a class="nav-link text-white active bg-gradient-primary" href="<%= Url.Action("Index", "Home") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">dashboard</i>
+            </div>
+            <span class="nav-link-text ms-1">Device</span>
+          </a>
+        </li>
+           <% } %>
+
+             <% if(role == "admin") { %>
+        <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Index", "Classification") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">table_view</i>
+            </div>
+            <span class="nav-link-text ms-1">Classifications</span>
+          </a>
+        </li>
+           <% } %>
+
+           <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Index", "DeviceManagementAgreement") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">app_registration</i>
+            </div>
+            <span class="nav-link-text ms-1">Device Management</span>
+          </a>
+        </li>
+
+          <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Index", "Return") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">autorenew</i>
+            </div>
+            <span class="nav-link-text ms-1">Return Device</span>
+          </a>
+        </li>
+
+            <% if(role == "admin" || role=="hr") { %>
+          
+           <li class="nav-item">
+          <a class="nav-link text-white" href="<%= Url.Action("Index", "ApprovedDisapproved") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">check</i>
+            </div>
+            <span class="nav-link-text ms-1">Pending Application</span>
+          </a>
+        </li>
+        <% } %>
+
+
+       
+          
+           <li class="nav-item">
+          <a class="nav-link text-white" href="<%= Url.Action("Index", "ApprovedDisapprovedList") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">description</i>
+            </div>
+            <span class="nav-link-text ms-1">Approved/Disapproved</span>
+          </a>
+        </li>
+
+
+           <% if(role == "admin" || role=="hr") { %>
+          
+           <li class="nav-item">
+          <a class="nav-link text-white" href="<%= Url.Action("Index", "History") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">history</i>
+            </div>
+            <span class="nav-link-text ms-1">History</span>
+          </a>
+        </li>
+        <% } %>
+
+      
+        <li class="nav-item mt-3">
+          <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Index", "AccountInformation") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">person</i>
+            </div>
+            <span class="nav-link-text ms-1">Account Information</span>
+          </a>
+        </li>
+        
+         <% if(role == "admin") { %>
+          
+           <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Index", "UserRegistration") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">assignment</i>
+            </div>
+            <span class="nav-link-text ms-1">User Registration</span>
+          </a>
+        </li>
+        <% } %>
+
+          <li class="nav-item">
+          <a class="nav-link text-white " href="<%= Url.Action("Logout", "Home") %>">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">logout</i>
+            </div>
+            <span class="nav-link-text ms-1">Sign Out</span>
+          </a>
+        </li>
+       
+      </ul>
+    </div>
+    
+  </aside>
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    <!-- Navbar -->
+     
+
+       <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+        <div><h1>Device</h1></div>
+        <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+          
+           <div class="position-fixed top-0 end-0 p-3">
+  <ul class="navbar-nav">
+    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+      <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+        <div class="sidenav-toggler-inner">
+          <i class="sidenav-toggler-line"></i>
+          <i class="sidenav-toggler-line"></i>
+          <i class="sidenav-toggler-line"></i>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+        </div>
+      
+    </nav>
+    
+      
+
+         <% if (role == "admin")
+             { %>
+
+
+        <div id="ImportModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content2">
+    <span id="closeModalBtn3" style="float: right; cursor: pointer; margin-left: auto;">&times;</span>
+      
+    <h2>IMPORT</h2>
+    <!-- Your form content goes here -->
+    <form id="importexportform" style="margin:0;padding:0">
+     
+    <input style="width:100%" type="file"  data-id="1" id="DMSUpload" name="file-multiple-input" multiple="" >
+        <div style="display: flex; justify-content: center;">
+        <button type="button" style="background: gray; color: white" class="uploading" id="btnImport2" onclick="importExcel()" disabled>IMPORT</button>
+        <button type="button" id="btnCancel">Cancel</button>
+           </div>
+    </form>
+  </div>
+</div>
+
+
+        <div>
+            <%--<input style="width:100%" type="file"  data-id="1" id="DMSUpload" name="file-multiple-input" multiple="" >--%>
+            <button type="button"  class="uploading" id="btnImport">Import</button>
+            <%--<button type="button" id="btnCancel">Cancel</button>--%>
+            <button id="download" class="button" onclick="showDropdown()">
+              DOWNLOAD
+              <select id="mySelectDL" style="display:none;" onchange="handleDownloadChange(this)">
+                  <option value="dummy" hidden></option>
+                <option id="DLTemplate" value="template">Template</option>
+                <option value="export">Export</option>
+              </select>
+            </button>
+            <button id ="btnAdd" >ADD</button>
+            <button id ="btnBulkEdit" hidden >EDIT</button>
+        </div>
+        <% } %>
+      <br />
+      <div>
+          Filtering Category:
+          <select id="selcategory">
+              <option></option>
+          </select>
+          <select id="selsubcategory">
+              <option></option>
+          </select>
+          </div>
+       <br />
+
+    
+        	<div>
+                <table id="dtDevice" class="table display responsive" width="100%"></table>
+                <div>
+          <%-- <button class="btn" id ="btnExport">EXPORT</button>
+           <a id="DMSTemplate" href="../../Content/Category_Device_template.xlsx">
+           <input id="DMSTemplate2"  type="button" value="Download Template" />
+                                            </a>--%>
+          </div>
+        	</div>
+
+          
+    
+
+
+  <div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content2">
+    <span id="closeModalBtn" style="float: right; cursor: pointer; margin-left: auto;">&times;</span>
+      
+    <h2>ADD DEVICE</h2>
+    <!-- Your form content goes here -->
+    <form id="categoryForm">
+      <!-- Your form fields go here -->
+      <label for="classification">Classification</label>
+      <select id="classification" name="classification" required>
+          <option></option>
+          </select>
+      <br>
+      <label for="subclassification">Sub-Classification</label>
+      <select id="subclassification" name="subclassification" required>
+          <option></option>
+          </select>
+      <br>
+        <label for="identificationno">Identification No:</label>
+      <input type="text" id="identificationno" name="identificationno" required>
+        <br>
+        <label for="serialno">Serial No:</label>
+      <input type="text" id="serialno" name="serialno" required>
+      <br>
+        <label for="devicename">Brand</label>
+      <input type="text" id="devicename" name="devicename" required>
+      <br>
+        <label>Status</label> 
+            <div>
+                <label>
+                    <input id="active" type="radio" name="status" value="1" checked> Active
+                </label>
+                <label>
+                    <input id="inactive" type="radio" name="status" value="0"> Inactive
+                </label>
+            </div>
+            <br>
+         <label>Device Status</label>
+            <div>
+                <label>
+                    <input type="checkbox" name="option1" id="updatestatus" > Update Status
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="autoupdate" > Auto Update
+                </label>
+                <label>
+                    <input type="checkbox" name="option1" id="symantec"> Symantec
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="skysea"> Skysea
+                </label>
+            </div>
+        <br>
+        <label for="version">Version</label>
+      <input type="text" id="version" name="version" required>
+      <br>
+        <label for="location">Location</label>
+      <input type="text" id="location" name="location" required>
+      <br>
+        <label for="pic">PIC</label>
+      <input type="text" id="pic" name="pic" required>
+      <br>
+        <label for="date">Date Deliver/Purchase</label>
+      <input type="date" id="date" name="date" required>
+      <br>
+        <label for="desc">Description</label>
+      <input type="text" id="desc" name="desc" required>
+      <br>
+         <label for="remarks">Remarks</label>
+      <input type="text" id="remarks" name="remarks" required>
+      <br>
+        <label for="department">Department</label>
+         <select id="department" name="deparment" required>
+          <option value="Testing">Testing</option>
+          <option value="RND">RND</option>
+          <option value="Admin/HR">Admin/HR</option>
+          </select>
+      <br>
+
+
+      <button type="submit" id="btnaddsubmit">ADD</button>
+    </form>
+  </div>
+</div>
+
+
+        <div id="EditModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content2">
+    <span id="closeModalBtn2" style="float: right; cursor: pointer; margin-left: auto;">&times;</span>
+      
+    <h2>EDIT DEVICE</h2>
+    <!-- Your form content goes here -->
+    <form id="categoryForm2">
+      <!-- Your form fields go here -->
+      <label for="classification2">Classification</label>
+      <select id="classification2" name="classification2" required>
+          <option></option>
+          </select>
+      <br>
+      <label for="subclassification2">Sub-Classification</label>
+      <select id="subclassification2" name="subclassification2" required>
+          <option></option>
+          </select>
+      <br>
+        <label for="identificationno2">Identification No:</label>
+      <input type="text" id="identificationno2" name="identificationno2" required>
+        <br>
+        <label for="serialno2">Serial No:</label>
+      <input type="text" id="serialno2" name="serialno2" required>
+      <br>
+        <label for="devicename2">Brand</label>
+      <input type="text" id="devicename2" name="devicename2" required>
+      <br>
+        <label>Status</label> 
+            <div>
+                <label>
+                    <input id="active2" type="radio" name="status2" value="1" checked> Active
+                </label>
+                <label>
+                    <input id="inactive2" type="radio" name="status2" value="0"> Inactive
+                </label>
+            </div>
+            <br>
+         <label>Device Status</label>
+            <div>
+                <label>
+                    <input type="checkbox" name="option1" id="updatestatus2" > Update Status
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="autoupdate2" > Auto Update
+                </label>
+                <label>
+                    <input type="checkbox" name="option1" id="symantec2"> Symantec
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="skysea2"> Skysea
+                </label>
+            </div>
+        <br>
+        <label for="version">Version</label>
+      <input type="text" id="version2" name="version" required>
+      <br>
+        <label for="location">Location</label>
+      <input type="text" id="location2" name="location" required>
+      <br>
+        <label for="pic">PIC</label>
+      <input type="text" id="pic2" name="pic" required>
+      <br>
+        <label for="date">Date Deliver/Purchase</label>
+      <input type="date" id="date2" name="date" required>
+      <br>
+        <label for="desc">Description</label>
+      <input type="text" id="desc2" name="desc" required>
+      <br>
+         <label for="remarks">Remarks</label>
+      <input type="text" id="remarks2" name="remarks" required>
+      <br>
+        <label for="department2">Department</label>
+         <select id="department2" name="deparment" required>
+          <option value="Testing">Testing</option>
+          <option value="RND">RND</option>
+          <option value="Admin/HR">Admin/HR</option>
+          </select>
+      <br>
+
+
+      <button type="submit" id="btneditsubmit">EDIT</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+       <div id="BulkEditModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content2">
+    <span id="BulkcloseModalBtn" style="float: right; cursor: pointer; margin-left: auto;">&times;</span>
+      
+    <h2>BULK EDIT DEVICE</h2>
+    <!-- Your form content goes here -->
+    <form id="BulkcategoryForm">
+    
+        <label for="devicename2">Brand</label>
+      <input type="text" id="brand" name="brand" required>
+      <br>
+        <label>Status</label> 
+            <div>
+                <label>
+                    <input id="active3" type="radio" name="status3" value="1" checked> Active
+                </label>
+                <label>
+                    <input id="inactive3" type="radio" name="status3" value="0"> Inactive
+                </label>
+            </div>
+            <br>
+         <label>Device Status</label>
+            <div>
+                <label>
+                    <input type="checkbox" name="option1" id="updatestatus3" > Update Status
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="autoupdate3" > Auto Update
+                </label>
+                <label>
+                    <input type="checkbox" name="option1" id="symantec3"> Symantec
+                </label>
+                <label>
+                    <input type="checkbox" name="option2" id="skysea3"> Skysea
+                </label>
+            </div>
+        <br>
+        <label for="version">Version</label>
+      <input type="text" id="version3" name="version" required>
+      <br>
+        <label for="location">Location</label>
+      <input type="text" id="location3" name="location" required>
+      
+      
+      <br>
+        <label for="desc">Description</label>
+      <input type="text" id="desc3" name="desc" required>
+      <br>
+         <label for="remarks">Remarks</label>
+      <input type="text" id="remarks3" name="remarks" required>
+     
+      <br>
+
+
+      <button type="submit" id="btnbulkeditsubmit">EDIT</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+     <div id="DetailsModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content2">
+    <span id="detailsclosemodal" style="float: right; cursor: pointer; margin-left: auto;">&times;</span>
+      
+    <h2>DETAILS</h2>
+    <!-- Your form content goes here -->
+    <form id="detailscategoryForm2">
+      <!-- Your form fields go here -->
+      <div class="form-group">
+        <label for="detailsclassification2">Classification:</label>
+        <select id="detailsclassification2" name="detailsclassification2" disabled>
+          <option></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="detailssubclassification2">Sub-Classification:</label>
+        <select id="detailssubclassification2" name="subclassification2" disabled>
+          <option></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="detailsidentificationno2">Identification No:</label>
+        <input type="text" id="detailsidentificationno2" name="identificationno2" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsserialno2">Serial No:</label>
+        <input type="text" id="detailsserialno2" name="detailsserialno2" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsevicename2">Brand:</label>
+        <input type="text" id="detailsdevicename2" name="detailsdevicename2" disabled>
+      </div>
+      <div class="form-group">
+        <label>Status:</label>
+        <input type="radio" id="detailsactive2" name="detailsstatus2" value="1" checked disabled>
+        <label for="detailsactive2">Active</label>
+        <input type="radio" id="detailsinactive2" name="detailsstatus2" value="0" disabled>
+        <label for="detailsinactive2">Inactive</label>
+      </div>
+      <div class="form-group">
+        <label>Device Status:</label>
+        <input type="checkbox" name="option1" id="detailsupdatestatus2" disabled>
+        <label for="detailsupdatestatus2">Update Status</label>
+        <input type="checkbox" name="option2" id="detailsautoupdate2" disabled>
+        <label for="detailsautoupdate2">Auto Update</label>
+        <input type="checkbox" name="option3" id="detailssymantec2" disabled>
+        <label for="detailssymantec2">Symantec</label>
+        <input type="checkbox" name="option4" id="detailsskysea2" disabled>
+        <label for="detailsskysea2">Skysea</label>
+      </div>
+      <div class="form-group">
+        <label for="detailsversion">Version:</label>
+        <input type="text" id="detailsversion2" name="version" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailslocation">Location:</label>
+        <input type="text" id="detailslocation2" name="location" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailspic">PIC:</label>
+        <input type="text" id="detailspic2" name="pic" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsdate">Date Deliver/Purchase:</label>
+        <input type="date" id="detailsdate2" name="date" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsdesc">Description:</label>
+        <input type="text" id="detailsdesc2" name="desc" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsremarks">Remarks:</label>
+        <input type="text" id="detailsremarks2" name="remarks" disabled>
+      </div>
+      <div class="form-group">
+        <label for="detailsdepartment2">Department:</label>
+        <select id="detailsdepartment2" name="deparment" disabled>
+          <option value="Testing" disabled>Testing</option>
+          <option value="RND" disabled>RND</option>
+          <option value="Admin/HR" disabled>Admin/HR</option>
+        </select>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+        <div id="loaderModal" class="modal">
+    <div class="modal-content-loader">
+        <div class="loader"></div>
+        <p>Loading...</p>
+    </div>
+</div>
+
+        <div id="successModal" class="modal">
+    <div class="modal-content-success">
+        <span id="closeSuccessModalBtn" class="close">&times;</span>
+        <h2>Success</h2>
+        <p id="successMessage"></p>
+    </div>
+</div>
+
+        
+
+
+
+      <div id="confirmationModal" class="modal">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			
+			<div class="modal-body">
+				<p>Do you really want to delete these records? This process cannot be undone.</p>
+			</div>
+			<div class="modal-footer justify-content-center">
+				<button type="button" id="btnCanc">Cancel</button>
+				<button type="button" id="btnDelete">Delete</button>
+			</div>
+		</div>
+	</div>
+    </div>
+
+    <!-- End Navbar -->
+   
+    </div>
+  </main>
+  <div class="fixed-plugin">
+   
+    <div class="card shadow-lg">
+      <div class="card-header pb-0 pt-3">
+        <div class="float-start">
+          <h5 class="mt-3 mb-0">Material UI Configurator</h5>
+          <p>See our dashboard options.</p>
+        </div>
+        <div class="float-end mt-4">
+          <button class="btn btn-link text-dark p-0 fixed-plugin-close-button">
+            <i class="material-icons">clear</i>
+          </button>
+        </div>
+        <!-- End Toggle Button -->
+      </div>
+      <hr class="horizontal dark my-1">
+      <div class="card-body pt-sm-3 pt-0">
+        <!-- Sidebar Backgrounds -->
+        <div>
+          <h6 class="mb-0">Sidebar Colors</h6>
+        </div>
+        <a href="javascript:void(0)" class="switch-trigger background-color">
+          <div class="badge-colors my-2 text-start">
+            <span class="badge filter bg-gradient-primary active" data-color="primary" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-dark" data-color="dark" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-info" data-color="info" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-success" data-color="success" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-warning" data-color="warning" onclick="sidebarColor(this)"></span>
+            <span class="badge filter bg-gradient-danger" data-color="danger" onclick="sidebarColor(this)"></span>
+          </div>
+        </a>
+        <!-- Sidenav Type -->
+        <div class="mt-3">
+          <h6 class="mb-0">Sidenav Type</h6>
+          <p class="text-sm">Choose between 2 different sidenav types.</p>
+        </div>
+        <div class="d-flex">
+          <button class="btn bg-gradient-dark px-3 mb-2 active" data-class="bg-gradient-dark" onclick="sidebarType(this)">Dark</button>
+          <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-transparent" onclick="sidebarType(this)">Transparent</button>
+          <button class="btn bg-gradient-dark px-3 mb-2 ms-2" data-class="bg-white" onclick="sidebarType(this)">White</button>
+        </div>
+        <p class="text-sm d-xl-none d-block mt-2">You can change the sidenav type just on desktop view.</p>
+        <!-- Navbar Fixed -->
+        <div class="mt-3 d-flex">
+          <h6 class="mb-0">Navbar Fixed</h6>
+          <div class="form-check form-switch ps-0 ms-auto my-auto">
+            <input class="form-check-input mt-1 ms-auto" type="checkbox" id="navbarFixed" onclick="navbarFixed(this)">
+          </div>
+        </div>
+        <hr class="horizontal dark my-3">
+        <div class="mt-2 d-flex">
+          <h6 class="mb-0">Light / Dark</h6>
+          <div class="form-check form-switch ps-0 ms-auto my-auto">
+            <input class="form-check-input mt-1 ms-auto" type="checkbox" id="dark-version" onclick="darkMode(this)">
+          </div>
+        </div>
+        <hr class="horizontal dark my-sm-4">
+        <a class="btn bg-gradient-info w-100" href="https://www.creative-tim.com/product/material-dashboard-pro">Free Download</a>
+        <a class="btn btn-outline-dark w-100" href="https://www.creative-tim.com/learning-lab/bootstrap/overview/material-dashboard">View documentation</a>
+        <div class="w-100 text-center">
+          <a class="github-button" href="https://github.com/creativetimofficial/material-dashboard" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star creativetimofficial/material-dashboard on GitHub">Star</a>
+          <h6 class="mt-3">Thank you for sharing!</h6>
+          <a href="https://twitter.com/intent/tweet?text=Check%20Material%20UI%20Dashboard%20made%20by%20%40CreativeTim%20%23webdesign%20%23dashboard%20%23bootstrap5&amp;url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fsoft-ui-dashboard" class="btn btn-dark mb-0 me-2" target="_blank">
+            <i class="fab fa-twitter me-1" aria-hidden="true"></i> Tweet
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.creative-tim.com/product/material-dashboard" class="btn btn-dark mb-0 me-2" target="_blank">
+            <i class="fab fa-facebook-square me-1" aria-hidden="true"></i> Share
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+            &copy; 2023 Valtes Advanced Technology, Inc. All rights reserved.
+        </footer>
+  <!--   Core JS Files   -->
+  <script src="/Content/js/core/popper.min.js"></script>
+  <script src="/Content/js/core/bootstrap.min.js"></script>
+    
+  <script src="/Content/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="/Content/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="/Content/js/plugins/chartjs.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+    <script>
+        // JavaScript code for toggling the sidebar on smaller screens
+        document.getElementById('iconSidenav').addEventListener('click', function () {
+            var sidenav = document.getElementById('sidenav-main');
+            var mainContent = document.querySelector('.main-content');
+            if (sidenav.style.width === '250px') {
+                sidenav.style.width = '0';
+                mainContent.style.marginLeft = '0';
+            } else {
+                sidenav.style.width = '250px';
+                mainContent.style.marginLeft = '250px';
+            }
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>
+
+
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.uikit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+    var role = '<%= role %>';
+    var firstNameValue = '<%= firstName %>';
+    var lastNameValue = '<%= lastName %>';
+    var userNameValue = '<%= userName %>';
+    var isAdmin = role == 'admin' ? 'true' : 'false';
+    var modalTitle = document.getElementById('titleContent');
+    var buttonTitle = document.getElementById('btnaddsubmit');
+    var serial = [];
+    var checkedCount = 0;
+    var dtDevice;
+    $.ajax({
+        url: '/Home/GetClassificationData', // Replace with your actual controller method
+        type: 'GET',
+
+        success: function (data) {
+            // Clear existing options
+            $("#classification").empty();
+            $("#classification2").empty();
+            $("#detailsclassification2").empty();
+            // Add new options based on the fetched data
+            $.each(data, function (index, item) {
+                $("#classification").append($('<option>', {
+                    value: item.Category,
+                    text: item.Category
+                }));
+            });
+            $.each(data, function (index, item) {
+                $("#classification2").append($('<option>', {
+                    value: item.Category,
+                    text: item.Category
+                }));
+            });
+            $.each(data, function (index, item) {
+                $("#detailsclassification2").append($('<option>', {
+                    value: item.Category,
+                    text: item.Category
+                }));
+            });
+        },
+        error: function (error) {
+            console.log('Error fetching sub-classification data:', error);
+        }
+    }).done(function () {
+        // After fetching classifications, fetch sub-classifications based on the selected classification
+        var selectedClassification = $("#classification").val();
+        $.ajax({
+            url: '/Home/GetSubClassificationData',
+            type: 'GET',
+            data: { selectedClassification: selectedClassification },
+            success: function (data) {
+                $("#subclassification").empty();
+
+                // Add new options based on the fetched data
+                $.each(data, function (index, item) {
+                    $("#subclassification").append($('<option>', {
+                        value: item.SubClassification,
+                        text: item.SubClassification
+                    }));
+                });
+            },
+            error: function (error) {
+                console.log('Error fetching sub-classification data:', error);
+            }
+        });
+    });
+
+
+
+
+
+    $("#classification").change(function () {
+        var selectedClassification = $("#classification").val();
+        $.ajax({
+            url: '/Home/GetSubClassificationData',
+            type: 'GET',
+            data: { selectedClassification: selectedClassification },
+            success: function (data) {
+                $("#subclassification").empty();
+
+                // Add new options based on the fetched data
+                $.each(data, function (index, item) {
+                    $("#subclassification").append($('<option>', {
+                        value: item.SubClassification,
+                        text: item.SubClassification
+                    }));
+                });
+            },
+            error: function (error) {
+                console.log('Error fetching sub-classification data:', error);
+            }
+
+        });
+    });
+
+
+
+
+    //filter function
+
+
+    $.ajax({
+        url: '/Home/GetClassificationData_filter', // Replace with your actual controller method
+        type: 'GET',
+
+        success: function (data) {
+            // Clear existing options
+            $("#selcategory").empty();
+            // Add new options based on the fetched data
+            $.each(data, function (index, item) {
+                $("#selcategory").append($('<option>', {
+                    value: item.Category,
+                    text: item.Category
+                }));
+            });
+        },
+        error: function (error) {
+            console.log('Error fetching sub-classification data:', error);
+        }
+    }).done(function () {
+        // After fetching classifications, fetch sub-classifications based on the selected classification
+        var selectedClassification = $("#selcategory").val();
+        $.ajax({
+            url: '/Home/GetSubClassificationData_filter',
+            type: 'GET',
+            data: { selectedClassification: selectedClassification },
+            success: function (data) {
+                $("#selsubcategory").empty();
+
+                // Add new options based on the fetched data
+                $.each(data, function (index, item) {
+                    $("#selsubcategory").append($('<option>', {
+                        value: item.SubClassification,
+                        text: item.SubClassification
+                    }));
+                });
+            },
+            error: function (error) {
+                console.log('Error fetching sub-classification data:', error);
+            }
+        });
+    });
+
+
+
+
+
+   
+
+
+
+    function Add() {
+
+        $("#myModal").css("display", "flex");
+
+
+    }
+
+
+
+
+
+    const dataSet = <%= new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(deviceList) %>;
+
+    $(document).ready(function () {
+
+
+
+
+         dtDevice = $('#dtDevice').DataTable({
+            data: dataSet,
+            columns: [
+                {
+                    title: '<input type="checkbox" id="selectAllCheckbox">', // Checkbox for "Select All"
+                    data: null,
+                    defaultContent: '',
+                    render: function (data, type, row) {
+                        return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                    }
+                },
+                { title: 'ID', data: 'ID', visible: false },
+                { title: 'IDENTIFICATION-NO', data: 'IdentificationNo', visible: false },
+                {
+                    title: 'SERIAL-NO', data: 'SerialNo',
+                    render: function (data, type, row) {
+                    return '<button type="button" class="btn btn-link btn-serial" id="btnSerialno" onClick="GetDetails(' + row.ID + ')">' + data + '</button>';
+                    }
+                },
+                { title: 'BRAND', data: 'DeviceName' },
+                { title: 'LOCATION', data: 'Location', visible: false },
+                { title: 'PIC', data: 'PIC' },
+                { title: 'CATEGORY', data: 'Classification' },
+                { title: 'SUB-CATEGORY', data: 'SubClassification' },
+                { title: 'DESCRIPTION', data: 'Description' },
+                {
+                    title: 'STATUS', data: 'Status', render: function (data, type, row) {
+                        // Customize the display based on the value in the "Status" column
+                        if (row.Status == 'True') {
+                            return 'Active';
+                        } else {
+                            return 'Inactive';
+                        }
+                    }
+                },
+                {
+                    title: 'UPDATE STATUS', data: 'UpdateStatus', visible: false, render: function (data, type, row) {
+                        // Customize the display based on the value in the "Status" column
+                        if (row.UpdateStatus == 'True') {
+                            return 'Active';
+                        } else {
+                            return 'Inactive';
+                        }
+                    }
+                },
+                {
+                    title: 'AUTO UPDATE', data: 'AutoUpdate', visible: false,  render: function (data, type, row) {
+                        // Customize the display based on the value in the "Status" column
+                        if (row.AutoUpdate == 'True') {
+                            return 'Active';
+                        } else {
+                            return 'Inactive';
+                        }
+                    }
+                },
+                {
+                    title: 'SYMANTEC', data: 'Symantec', visible: false,  render: function (data, type, row) {
+                        // Customize the display based on the value in the "Status" column
+                        if (row.Symantec == 'True') {
+                            return 'Active';
+                        } else {
+                            return 'Inactive';
+                        }
+                    }
+                },
+                {
+                    title: 'SKYSEA', data: 'Skysea', visible: false,  render: function (data, type, row) {
+                        // Customize the display based on the value in the "Status" column
+                        if (row.Skysea == 'True') {
+                            return 'Active';
+                        } else {
+                            return 'Inactive';
+                        }
+                    }
+                },
+
+                { title: 'VERSION', data: 'Version', visible: false },
+
+                {
+                    title: 'DATE DELIVER', data: 'DateDeliver', visible: false,
+                    render: function (data, type, row) {
+                        // Format the date using moment.js
+                        return moment(data).format('MM/DD/YYYY'); // Adjust the format as needed
+                    }
+                   
+                },
+
+
+                { title: 'REMARKS', data: 'Remarks', visible: false },
+                { title: 'DEPARTMENT', data: 'Department', visible: false },
+
+                {
+                    title: 'ACTION', data: null, render: function (data, type, row) {
+                        // Customize the action column as needed
+                        return isAdmin === 'true' ?
+                             '<div class="action-buttons">' +
+                            /*'<span id="add" onClick="Add()"><i class="fa fa-plus"></i></span> ' +*/
+                            '<span id="edit" onClick="Edit(' + row.ID + ')"><i class="fa fa-pencil"></i></span> ' +
+                            '<span id="remove" onClick="Delete(' + row.ID + ')"><i class="fa fa-trash"></i></span> ' +
+                            '</div>' : '';
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    targets: '_all', // Target all columns
+                    className: 'text-center', // Add the 'text-center' class to center-align the data
+                },
+            ],
+            scrollX: true,
+            responsive: true,
+            order: [[0, 'asc']],
+            headerCallback: function (thead, data, start, end, display) {
+                // Center the text in the 'CATEGORY' column header
+                $(thead).find('th:eq(0)').addClass('text-center');
+            },
+
+
+            initComplete: function (settings, json) {
+                // DataTable initialization is complete
+                dtDevice = this.api();
+
+              
+            }
+        });
+
+    
+
+        $("#selcategory").change(function () {
+            var selectedCategory = $("#selcategory").val();
+
+            // Fetch sub-classification data first
+            $.ajax({
+                url: '/Home/GetSubClassificationData_filter',
+                type: 'GET',
+                data: { selectedClassification: selectedCategory },
+                success: function (data) {
+                    $("#selsubcategory").empty();
+
+                    // Add new options based on the fetched data
+                    $.each(data, function (index, item) {
+                        $("#selsubcategory").append($('<option>', {
+                            value: item.SubClassification,
+                            text: item.SubClassification
+                        }));
+                    });
+
+                    // Once sub-classification data is fetched, fetch filtered data
+                    var selectedSubcategory = $("#selsubcategory").val();
+                    fetchFilteredData(selectedCategory, selectedSubcategory);
+                },
+                error: function (error) {
+                    console.log('Error fetching sub-classification data:', error);
+                }
+            });
+        });
+
+
+
+        $('#selectAllCheckbox').on('change', function () {
+            var isChecked = $(this).prop('checked');
+
+            // Check/uncheck individual row checkboxes
+            dtDevice.rows().nodes().to$().find(':checkbox').prop('checked', isChecked);
+
+            // Manually handle the row selection without highlighting
+            dtDevice.rows().every(function () {
+                var node = this.node();
+                if (isChecked) {
+                   
+                    $(node).find(':checkbox').prop('checked', true);
+                    processRowData(this.data(), true);
+                    document.getElementById('btnBulkEdit').hidden = false;
+                } else {
+                  
+                    $(node).find(':checkbox').prop('checked', false);
+                    processRowData(this.data(), false);
+                }
+            });
+        });
+
+
+        $("#selsubcategory").change(function () {
+            var selectedCategory = $("#selcategory").val();
+
+                    // Once sub-classification data is fetched, fetch filtered data
+                    var selectedSubcategory = $("#selsubcategory").val();
+                    fetchFilteredData(selectedCategory, selectedSubcategory);
+              
+            
+        });
+
+        function fetchFilteredData(selectedCategory, selectedSubcategory) {
+            $.ajax({
+                url: '/Home/GetDevices_filter',
+                type: 'GET',
+                data: {
+                    classification: selectedCategory,
+                    subclassification: selectedSubcategory
+                },
+                success: function (filteredData) {
+                    // Clear existing data in the DataTable
+                    dtDevice.clear();
+
+                    // Add the new filtered data to the DataTable
+                    dtDevice.rows.add(filteredData);
+
+                    // Redraw the DataTable
+                    dtDevice.draw();
+                },
+                error: function (error) {
+                    console.log('Error fetching filtered data:', error);
+                }
+            });
+        }
+    });
+
+    function processRowData(rowData, isChecked) {
+        if (isChecked) {
+            checkedCount++;
+            serial.push(rowData.SerialNo);
+        } else {
+            // Remove the SerialNo from the array if unchecked
+            checkedCount--;
+            var index = serial.indexOf(rowData.SerialNo);
+            if (index !== -1) {
+                serial.splice(index, 1);
+            }
+        }
+    }
+    
+    function clearArray() {
+        serial = [];
+    }
+
+  
+    $(document).on('change', '#dtDevice tbody input[type="checkbox"]', function () {
+       var row = $(this).closest('tr');
+        var rowData = dtDevice.row(row).data();
+
+        // Check if the checkbox is checked or unchecked
+        if ($(this).prop('checked')) {
+            // Checkbox is checked, do something with the data
+          
+            processRowData(rowData, true);
+
+            if (checkedCount > 1) {
+                document.getElementById('btnBulkEdit').hidden = false;
+            }
+        } else {
+
+            if (checkedCount == 0) {
+
+                checkedCount = 0;
+            } else {
+                
+                processRowData(rowData, false);
+            }
+
+            if (checkedCount == 0) {
+
+
+                processRowData(rowData, false);
+            }
+        }
+    });
+
+
+
+    var rowData;
+
+    function Edit(rowID) {
+        
+        rowData = dataSet.find(function (item) {
+            return item.ID === rowID;
+        });
+
+        document.getElementById("classification2").setAttribute('disabled', 'disabled');
+        document.getElementById("subclassification2").setAttribute('disabled', 'disabled');
+        document.getElementById("serialno2").setAttribute('disabled', 'disabled');
+        PopulateEditModal(rowData);
+
+        // Fetch and set the sub-classification options, then display the modal
+        fetchAndSetSubClassification(rowData, function () {
+                $("#EditModal").css("display", "block");
+        });
+    }
+
+
+    function GetDetails(rowID) {
+
+        rowData = dataSet.find(function (item) {
+            return item.ID === rowID;
+        });
+
+        document.getElementById("detailsclassification2").setAttribute('disabled', 'disabled');
+        document.getElementById("detailssubclassification2").setAttribute('disabled', 'disabled');
+        PopulateEditModal(rowData);
+
+        // Fetch and set the sub-classification options, then display the modal
+        fetchAndSetSubClassification(rowData, function () {
+          
+                $("#DetailsModal").css("display", "block");
+            
+        });
+    }
+
+    var id
+    function Delete(rowID) {
+        $("#confirmationModal").modal("show");
+        rowData = dataSet.find(function (item) {
+            return item.ID === rowID;
+        });
+
+         id = rowData.ID
+    }
+
+
+    $("#subclassification2").on('change', function () {
+        // Call the fetchAndSetSubClassification function without the callback
+        fetchAndSetSubClassification(rowData);
+    });
+
+
+
+
+    $("#btnImport").click(function () {
+        $("#ImportModal").css("display", "block");
+    });
+
+
+
+    function fetchAndSetSubClassification(rowData, callback) {
+        var selectedClassification2 = $("#classification2").val();
+
+        $.ajax({
+            url: '/Home/GetSubClassificationData',
+            type: 'GET',
+            data: { selectedClassification: selectedClassification2 },
+            success: function (data) {
+                $("#loaderModal").css("display", "none");
+                $("#subclassification2").empty();
+                $("#detailssubclassification2").empty();
+
+                // Add new options based on the fetched data
+                $.each(data, function (index, item) {
+                    $("#subclassification2").append($('<option>', {
+                        value: item.SubClassification,
+                        text: item.SubClassification
+                    }));
+                });
+
+                $.each(data, function (index, item) {
+                    $("#detailssubclassification2").append($('<option>', {
+                        value: item.SubClassification,
+                        text: item.SubClassification
+                    }));
+                });
+
+                // Set the value after options are loaded
+                $("#subclassification2").val(rowData.SubClassification);
+
+                $("#subclassification2").change();
+
+                $("#detailssubclassification2").val(rowData.SubClassification);
+
+                $("#detailssubclassification2").change();
+
+                // Call the callback function after successfully fetching and setting the sub-classification options
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            },
+            error: function (error) {
+                $("#loaderModal").css("display", "none");
+                console.log('Error fetching sub-classification data:', error);
+            }
+        });
+    }
+
+
+    $("#btnCanc").click(function () {
+        // Close the modal
+        //location.reload();
+        //setTimeout(function () {
+        //    location.reload();
+        //}, 3000);
+
+        $("#loaderModal").css("display", "none");
+        $("#EditModal").css("display", "none");
+        $("#confirmationModal").css("display", "none");
+    });
+
+    $("#btnDelete").click(function () {
+        
+        $.ajax({
+            url: '/Home/DeleteCategoryDevices',
+            type: 'POST',
+            data: {
+                ID: id,
+                FirstName: firstNameValue,
+                LastName: lastNameValue,
+                UserName: userNameValue
+
+            },
+            success: function (data) {
+                $("#loaderModal").css("display", "none");
+                $("#EditModal").css("display", "none");
+                $("#confirmationModal").css("display", "none");
+                $("#successMessage").text("Data deleted successfully!");
+                $("#successModal").css("display", "block");
+
+            },
+            error: function (error) {
+                $("#loaderModal").css("display", "none");
+                console.log('Error:', error);
+            }
+        });
+    });
+
+        function PopulateEditModal(rowData) {
+            rowData.DateDeliver = new Date(parseInt(rowData.DateDeliver.substr(6)));
+
+            // Format the date as "YYYY-MM-DD"
+        var formattedDateForInput = rowData.DateDeliver.getFullYear() + '-' +
+            ('0' + (rowData.DateDeliver.getMonth() + 1)).slice(-2) + '-' +
+            ('0' + rowData.DateDeliver.getDate()).slice(-2);
+
+
+        
+        $("#classification2").val(rowData.Classification);
+        // Commenting out the line below, as it will be set after fetching sub-classification data
+        // $("#subclassification2").val(rowData.SubClassification);
+        $("#identificationno2").val(rowData.IdentificationNo);
+
+        $("#serialnodup").val(rowData.SerialNo);
+        $("#serialno2").val(rowData.SerialNo);
+        $("#devicename2").val(rowData.DeviceName);
+        $("#version2").val(rowData.Version);
+        $("#location2").val(rowData.Location);
+        $("#pic2").val(rowData.PIC);
+        $("#date2").val(formattedDateForInput);
+        $("#desc2").val(rowData.Description);
+        $("#updatestatus2").prop("checked", rowData.UpdateStatus.toLowerCase() === "true");
+        $("#autoupdate2").prop("checked", rowData.AutoUpdate.toLowerCase() === "true");
+        $("#symantec2").prop("checked", rowData.Symantec.toLowerCase() === "true");
+        $("#skysea2").prop("checked", rowData.Skysea.toLowerCase() === "true");
+        $("#remarks2").val(rowData.Remarks);
+        $("#department2").val(rowData.Department);
+
+
+
+        $("#detailsclassification2").val(rowData.Classification);
+        // Commenting out the line below, as it will be set after fetching sub-classification data
+        // $("#subclassification2").val(rowData.SubClassification);
+        $("#detailsidentificationno2").val(rowData.IdentificationNo);
+        $("#detailsserialno2").val(rowData.SerialNo);
+        $("#detailsdevicename2").val(rowData.DeviceName);
+        $("#detailsversion2").val(rowData.Version);
+        $("#detailslocation2").val(rowData.Location);
+        $("#detailspic2").val(rowData.PIC);
+        $("#detailsdate2").val(formattedDateForInput);
+        $("#detailsdesc2").val(rowData.Description);
+        $("#detailsupdatestatus2").prop("checked", rowData.UpdateStatus.toLowerCase() === "true");
+        $("#detailsautoupdate2").prop("checked", rowData.AutoUpdate.toLowerCase() === "true");
+        $("#detailssymantec2").prop("checked", rowData.Symantec.toLowerCase() === "true");
+        $("#detailsskysea2").prop("checked", rowData.Skysea.toLowerCase() === "true");
+        $("#detailsremarks2").val(rowData.Remarks);
+        $("#detailsdepartment2").val(rowData.Department);
+    }
+
+
+    // Handle the click event for the button with ID btnAdd
+    $("#btnAdd").click(function () {
+        $("#myModal").css("display", "block");
+    });
+
+
+    $("#closeModalBtn").click(function () {
+        // Close the modal
+        $("#myModal").css("display", "none");
+    });
+
+    $("#closeModalBtn2").click(function () {
+        // Close the modal
+        $("#EditModal").css("display", "none");
+        //location.reload();
+    });
+
+    $("#detailsclosemodal").click(function () {
+        // Close the modal
+        $("#DetailsModal").css("display", "none");
+        
+    });
+    $("#closeModalBtn3").click(function () {
+        // Close the modal
+        $("#ImportModal").css("display", "none");
+
+        document.getElementById("btnImport2").disabled = true;
+        document.getElementById("btnImport2").style.backgroundColor = "gray";
+        document.getElementById("btnImport2").style.Color = "white";
+        $("#DMSUpload").val('');
+       
+    });
+
+    $("#closeSuccessModalBtn").click(function () {
+        $("#successModal").css("display", "none");
+        location.reload();
+    });
+
+    $("#btnaddsubmit").click(function () {
+        $("#loaderModal").css("display", "block");
+        event.preventDefault();
+        var classification = $("#classification").val();
+        var subclassification = $("#subclassification").val();
+        var identificationno = $("#identificationno").val();
+        var serialno = $("#serialno").val();
+        var devicename = $("#devicename").val();
+        var status = document.querySelector("input[type='radio'][name=status]:checked").value;;
+        var isUpdateStatusChecked = $('#updatestatus').is(':checked');
+        var updatestatus = isUpdateStatusChecked ? 1 : 0;
+        var isAutoUpdateChecked = $('#autoupdate').is(':checked');
+        var autoupdate = isAutoUpdateChecked ? 1 : 0;
+        var isSymantecChecked = $('#symantec').is(':checked');
+        var symantec = isSymantecChecked ? 1 : 0;
+        var isSkyseaChecked = $('#skysea').is(':checked');
+        var skysea = isSkyseaChecked ? 1 : 0;
+        var version = $("#version").val();
+        var location = $("#location").val();
+        var pic = $("#pic").val();
+        var date = $("#date").val();
+        var desc = $("#desc").val();
+        var remarks = $("#remarks").val();
+        var department = $("#department").val();
+        var activity = 'ADD';
+
+        if (identificationno == '' || serialno == '' || devicename == '' || version == '' || location == '' || pic == '' || date =='' || remarks == '') {
+            alert("Please complete the fields!");
+            $("#loaderModal").css("display", "none");
+        } else {
+            $.ajax({
+                url: '/Home/InsertCategoryDevices',
+                type: 'POST',
+                data: {
+                    Classification: classification,
+                    SubClassification: subclassification,
+                    IdentificationNo: identificationno,
+                    SerialNo: serialno,
+                    DeviceName: devicename,
+                    Status: status,
+                    UpdateStatus: updatestatus,
+                    AutoUpdate: autoupdate,
+                    Symantec: symantec,
+                    Skysea: skysea,
+                    Version: version,
+                    Location: location,
+                    PIC: pic,
+                    DateDeliver: date,
+                    Description: desc,
+                    Remarks: remarks,
+                    Department: department,
+                    FirstName: firstNameValue,
+                    LastName: lastNameValue,
+                    UserName: userNameValue,
+                    Activity: activity,
+                },
+                success: function (data) {
+                    $("#loaderModal").css("display", "none");
+                    $("#myModal").css("display", "none");
+                    $("#successMessage").text("Data added successfully!");
+                    $("#successModal").css("display", "block");
+
+                },
+                error: function (error) {
+                    $("#loaderModal").css("display", "none");
+                    console.log('Error:', error);
+                }
+            });
+        }
+
+       
+    });
+
+
+    $("#btneditsubmit").click(function () {
+        $("#loaderModal").css("display", "block");
+        event.preventDefault();
+        var id = rowData.ID
+        var identificationno = $("#identificationno2").val();
+        var serialnodup = $("#serialno2").val();
+        var serialno = $("#serialno2").val();
+        var devicename = $("#devicename2").val();
+        var status = document.querySelector("input[type='radio'][name=status2]:checked").value;;
+        var isUpdateStatusChecked = $('#updatestatus2').is(':checked');
+        var updatestatus = isUpdateStatusChecked ? 1 : 0;
+        var isAutoUpdateChecked = $('#autoupdate2').is(':checked');
+        var autoupdate = isAutoUpdateChecked ? 1 : 0;
+        var isSymantecChecked = $('#symantec2').is(':checked');
+        var symantec = isSymantecChecked ? 1 : 0;
+        var isSkyseaChecked = $('#skysea2').is(':checked');
+        var skysea = isSkyseaChecked ? 1 : 0;
+        var version = $("#version2").val();
+        var location = $("#location2").val();
+        var pic = $("#pic2").val();
+        var date = $("#date2").val();
+        var desc = $("#desc2").val();
+        var remarks = $("#remarks2").val();
+        var department = $("#department2").val();
+
+        if (identificationno == '' || serialno == '' || devicename == '' || version == '' || location == '' || pic == '' || date == '' || remarks == '') {
+            alert("Please complete the fields!");
+            $("#loaderModal").css("display", "none");
+        } else {
+            $.ajax({
+                url: '/Home/EditCategoryDevices',
+                type: 'POST',
+                data: {
+                    ID: id,
+                    IdentificationNo: identificationno,
+                    SerialNo: serialno,
+                    DeviceName: devicename,
+                    Status: status,
+                    UpdateStatus: updatestatus,
+                    AutoUpdate: autoupdate,
+                    Symantec: symantec,
+                    Skysea: skysea,
+                    Version: version,
+                    Location: location,
+                    PIC: pic,
+                    DateDeliver: date,
+                    Description: desc,
+                    Remarks: remarks,
+                    Department: department,
+                    FirstName: firstNameValue,
+                    LastName: lastNameValue,
+                    UserName: userNameValue
+                },
+                success: function (data) {
+                    $("#loaderModal").css("display", "none");
+                    $("#EditModal").css("display", "none");
+                    $("#successMessage").text("Data edited successfully!");
+                    $("#successModal").css("display", "block");
+
+                },
+                error: function (error) {
+                    $("#loaderModal").css("display", "none");
+                    console.log('Error:', error);
+                }
+            });
+        }
+       
+    });
+
+
+
+
+    $('#btnExport').on('click', function (e) {
+        //  alert("number-inputs" + repTable.rows(repTable.row(this).index()).data()[0][0]);
+        $("#loaderModal").css("display", "block");
+
+        $.ajax({
+            type: "POST",
+            url: '/Home/onGetCategoryDevices/',
+            data: 'none',
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.success) {
+                    $("#loaderModal").css("display", "none");
+                    window.location = "../../Junk/" + data.fileName;
+                }
+                else {
+                    $("#loaderModal").css("display", "none");
+                    alert(data.message);
+                }
+            },
+            error: function (error) {
+                $("#loaderModal").css("display", "none");
+                alert(error);
+            }
+        });
+
+        //alert(repTable.rows( repTable.row(this).index() ).data()[0][0])
+    });
+
+
+    $('#DMSUpload').on('change', function (e) {
+        $("#loaderModal").css("display", "block");
+        var uploader = this.id;
+        var fileName = document.getElementById(uploader).value.split('\\').pop();
+        if (fileName.length != '0') {
+            $("#loaderModal").css("display", "none");
+            document.getElementById("btnImport2").disabled = false;
+            document.getElementById("btnImport2").style.backgroundColor = "#36a2eb";
+            document.getElementById("btnImport2").style.Color = "white";
+            return;
+        }
+    });
+
+
+    $('#btnCancel').on('click', function (e) {
+        var res = this.id.substring(0, this.id.length - 6);
+        document.getElementById("btnImport2").disabled = true;
+        document.getElementById("btnImport2").style.backgroundColor = "gray";
+        document.getElementById("btnImport2").style.Color = "white";
+        $("#DMSUpload").val('');
+    });
+
+
+
+
+    function importExcel() {
+        $("#loaderModal").css("display", "block");
+        var formData = new FormData();
+        var fileInput = document.getElementById('DMSUpload');
+        var act = 'IMPORT'
+
+        // Check if a file is selected
+        if (fileInput.files.length > 0) {
+            formData.append('file', fileInput.files[0]);
+            formData.append('firstName', firstNameValue);
+            formData.append('lastName', lastNameValue);
+            formData.append('userName', userNameValue);
+            formData.append('activity', act);
+
+            $.ajax({
+                url: '/Home/ImportExcel',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+
+                    if (data.success) {
+                        $("#loaderModal").css("display", "none");
+                        $("#successMessage").text("Data imported successfully!");
+                        $("#ImportModal").css("display", "none");
+                        $("#successModal").css("display", "block");
+                    } else {
+                        alert(data.message);
+                        $("#loaderModal").css("display", "none");
+                    }
+                    
+                },
+                error: function (error) {
+                    $("#loaderModal").css("display", "none");
+                    console.log('Error:', error);
+                }
+            });
+        } else {
+            $("#loaderModal").css("display", "none");
+            console.log('No file selected.');
+        }
+    }
+
+    function cancelImport() {
+        // Reset the file input and any other necessary cleanup
+        $("#DMSUpload").val('');
+    }
+
+
+
+
+
+    $("#serialno").on('input', function () {
+        checkSerialAvailability();
+    });
+
+    function checkSerialAvailability() {
+        var serialno = $("#serialno").val();
+
+        // Make sure the username is not empty before making the AJAX call
+        if (serialno.trim() !== "") {
+            $.ajax({
+                type: "GET",
+                url: "/Home/CheckSerialAvailability",
+                data: { SerialNo: serialno },
+                success: function (data) {
+                    if (!data.available) {
+                        alert("Serial Number is already input and active. Please double check the serial number.");
+                        document.getElementById("btnaddsubmit").disabled = true;
+                        document.getElementById("btnaddsubmit").style.color = 'white';
+                        document.getElementById("btnaddsubmit").style.backgroundColor = 'Gray';
+                    } else {
+                        document.getElementById("btnaddsubmit").style.color = '';
+                        document.getElementById("btnaddsubmit").style.backgroundColor = '';
+                        document.getElementById("btnaddsubmit").disabled = false;
+                    }
+                },
+                error: function () {
+                    alert("Error checking serial number availability.");
+                }
+            });
+        }
+    }
+
+
+
+    var isDropdownVisible = false;
+    var isTemplateSelected = false;
+    var templateLink = document.getElementById('DLTemplate');
+
+    function showDropdown() {
+        var dropdown = document.getElementById('mySelectDL');
+
+        if (!isDropdownVisible) {
+            dropdown.style.display = 'inline-block';
+            isDropdownVisible = true;
+        }
+    }
+
+    function handleDownloadChange(selectElement) {
+        var selectedValue = selectElement.value;
+        
+       
+        if (selectedValue === 'template') {
+           
+            templateLink.href = '../../Content/Category_Device_template.xlsx';
+            downloadTemplate();
+        } else {
+
+            $.ajax({
+                type: "POST",
+                url: '/Home/onGetCategoryDevices/',
+                data: 'none',
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.success) {
+                        $("#loaderModal").css("display", "none");
+                        window.location = "../../Junk/" + data.fileName;
+                    }
+                    else {
+                        $("#loaderModal").css("display", "none");
+                        alert(data.message);
+                    }
+                },
+                error: function (error) {
+                    $("#loaderModal").css("display", "none");
+                    alert(error);
+                }
+            });
+        }
+
+        // Hide the dropdown after the selection is made
+        selectElement.style.display = 'none';
+        isDropdownVisible = false;
+    }
+
+    function downloadTemplate() {
+        // Get the link element
+         templateLink = document.getElementById('DLTemplate');
+
+        // Trigger the download action
+        var link = document.createElement('a');
+        link.href = templateLink.href;
+        link.download = 'Category_Device_template.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+
+
+
+
+    $('#dtDevice tbody').on('click', '.btn-serial', function () {
+        var $row = $(this).closest('tr');
+
+        var $button = $row.find('.btn-serial');
+
+        // Extract the ReferenceNo from the button text
+        referenceNo = $button.text();
+        // Get the row index using DataTable API
+        var rowIndex = dtDevice.row($row).index();
+
+        // Use the DataTable API cell method to retrieve the data
+        var data = dtDevice.cell({ row: rowIndex, column: 0 }).data();
+
+        // Check if data is not undefined
+        if (data) {
+            // Trigger modal using vanilla JavaScript
+            $.ajax({
+                url: '/Home/GetReferenceDetail',
+                type: 'POST',
+                data: {
+                    referenceNo: referenceNo,
+                   // role: role
+                }, // Pass the reference number you want to fetch
+                success: function (data) {
+                   // dtDeviceDetail.clear();
+
+                    // Add new data to dtDeviceDetail
+                  //  dtDeviceDetail.rows.add(data);
+
+                    // Redraw dtDeviceDetail to reflect the changes
+                  //  dtDeviceDetail.draw();
+                    document.getElementById('DetailsModal').style.display = 'block';
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+
+
+        } else {
+            console.error("Unable to get data for the clicked row");
+        }
+
+
+    });
+
+
+
+    $('#btnBulkEdit').on('click', function () {
+        $("#BulkEditModal").css("display", "block");
+    });
+
+    $('#BulkcloseModalBtn').on('click', function () {
+        $("#BulkEditModal").css("display", "none");
+    });
+
+
+
+    $('#btnbulkeditsubmit').on('click', function () {
+        $("#loaderModal").css("display", "block");
+        event.preventDefault();
+        var brand = $("#brand").val();
+        var status = document.querySelector("input[type='radio'][name=status3]:checked").value;;
+        var isUpdateStatusChecked = $('#updatestatus3').is(':checked');
+        var updatestatus = isUpdateStatusChecked ? 1 : 0;
+        var isAutoUpdateChecked = $('#autoupdate3').is(':checked');
+        var autoupdate = isAutoUpdateChecked ? 1 : 0;
+        var isSymantecChecked = $('#symantec3').is(':checked');
+        var symantec = isSymantecChecked ? 1 : 0;
+        var isSkyseaChecked = $('#skysea3').is(':checked');
+        var skysea = isSkyseaChecked ? 1 : 0;
+        var version = $("#version3").val();
+        var location = $("#location3").val();
+        var desc = $("#desc3").val();
+        var remarks = $("#remarks3").val();
+       
+
+        if (brand == '' || version == '' || location == '' || desc == '' || remarks == '') {
+            alert("Please complete the fields!");
+            $("#loaderModal").css("display", "none");
+        } else {
+            $.ajax({
+                url: '/Home/BulkEdit',
+                type: 'POST',
+                data: {
+
+                    serial: serial,
+                    Brand: brand,
+                    Status: status,
+                    UpdateStatus: updatestatus,
+                    AutoUpdate: autoupdate,
+                    Symantec: symantec,
+                    Skysea: skysea,
+                    Version: version,
+                    Location: location,
+                    Description: desc,
+                    Remarks: remarks
+                },
+                success: function (data) {
+                    $("#loaderModal").css("display", "none");
+                    $("#BulkEditModal").css("display", "none");
+                    $("#successMessage").text("Data edited successfully!");
+                    $("#successModal").css("display", "block");
+
+                },
+                error: function (error) {
+                    $("#loaderModal").css("display", "none");
+                    console.log('Error:', error);
+                }
+            });
+        }
+    });
+
+
+</script>
+
+<script src="/Content/js/material-dashboard.min.js"></script>
